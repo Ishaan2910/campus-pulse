@@ -134,35 +134,38 @@ print("Computed Context Vector Shape:", out.shape)`
     chatScrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Aggregate Attendance Math
+  // Calculations
   const totalClassesSum = subjects.reduce((acc, s) => acc + s.total, 0);
   const totalAttendedSum = subjects.reduce((acc, s) => acc + s.attended, 0);
   const overallAttendancePct = Math.round((totalAttendedSum / totalClassesSum) * 100);
   const overallNeededTo75 = Math.max(0, Math.ceil((0.75 * totalClassesSum - totalAttendedSum) / 0.25));
 
-  const generatedAppealLetter = `To,
-The Head of Department / Dean of Academic Affairs,
-Department of ${student.department},
-
-Subject: Application for Attendance Condonation / On-Duty (OD) Regularization
-
-Respected Sir/Madam,
-
-I am ${student.name} (Roll No: ${student.id}), studying in ${student.semester} of B.Tech CSE (AI & ML). 
-
-My current attendance in ${targetSubject} stands below the mandatory 75% examination threshold due to my participation in:
-"${appealReason}".
-
-I have maintained a cumulative CGPA of ${student.cgpa} and have completed all relevant continuous assessment modules and laboratory tasks. I respectfully request you to grant me On-Duty (OD) condonation for the missed lecture hours so that I remain eligible for the upcoming semester examinations.
-
-Relevant proof and event verification documents are attached herewith.
-
-Thanking you.
-
-Sincerely,
-${student.name}
-Roll No: ${student.id}
-Date: ${ new Date().toLocaleDateString()}`;
+  // Formatted appeal letter using string array concatenation
+  const generatedAppealLetter = [
+    "To,",
+    "The Head of Department / Dean of Academic Affairs,",
+    "Department of " + student.department + ",",
+    "",
+    "Subject: Application for Attendance Condonation / On-Duty (OD) Regularization",
+    "",
+    "Respected Sir/Madam,",
+    "",
+    "I am " + student.name + " (Roll No: " + student.id + "), studying in " + student.semester + " of B.Tech CSE (AI & ML).",
+    "",
+    "My current attendance in " + targetSubject + " stands below the mandatory 75% examination threshold due to my participation in:",
+    "\"" + appealReason + "\".",
+    "",
+    "I have maintained a cumulative CGPA of " + student.cgpa + " and have completed all relevant continuous assessment modules and laboratory tasks. I respectfully request you to grant me On-Duty (OD) condonation for the missed lecture hours so that I remain eligible for the upcoming semester examinations.",
+    "",
+    "Relevant proof and event verification documents are attached herewith.",
+    "",
+    "Thanking you.",
+    "",
+    "Sincerely,",
+    student.name,
+    "Roll No: " + student.id,
+    "Date: October 2026"
+  ].join("\n");
 
   const handleSendMessage = (customText?: string) => {
     const text = customText || inputQuery;
@@ -178,7 +181,7 @@ Date: ${ new Date().toLocaleDateString()}`;
       if (lower.includes("appeal") || lower.includes("od") || lower.includes("letter")) {
         botResponse = "I have drafted your formal OD appeal letter! Click the 'Generate OD / Detention Appeal' button in the Attendance tab to copy and submit it to the HOD.";
       } else if (lower.includes("attendance") || lower.includes("75")) {
-        botResponse = `Your aggregate attendance is ${overallAttendancePct}%. You are under the 75% criteria in NLP (64%) and MLOps (65%). Attend the next ${overallNeededTo75} classes continuously, or submit an OD appeal letter.`;
+        botResponse = "Your aggregate attendance is " + overallAttendancePct + "%. You are under the 75% criteria in NLP (64%) and MLOps (65%). Attend the next " + overallNeededTo75 + " classes continuously, or submit an OD appeal letter.";
       } else if (lower.includes("code") || lower.includes("sandbox")) {
         botResponse = "Your attention calculation handles matrix scaling cleanly with np.sqrt(d_k). Ready for embedding layer tests!";
       }
@@ -233,7 +236,7 @@ Date: ${ new Date().toLocaleDateString()}`;
                 B.Tech CSE (AI &amp; ML)
               </span>
             </div>
-            <p className="text-xs text-gray-500">Autonomous Student Academic Intelligence &amp; Action Hub</p>
+            <p className="text-xs text-gray-500">Autonomous Student Academic Intelligence &amp; Action Hub[cite: 1]</p>
           </div>
         </div>
 
@@ -266,7 +269,7 @@ Date: ${ new Date().toLocaleDateString()}`;
         {/* Left Column */}
         <div className="lg:col-span-8 space-y-6">
 
-          {/* TAB 1: ATTENDANCE ANALYSIS & DETENTION DEFENSE APPEAL */}
+          {/* TAB 1: ATTENDANCE ANALYSIS & DETENTION APPEAL */}
           {activeTab === "attendance" && (
             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-6">
               
@@ -334,7 +337,7 @@ Date: ${ new Date().toLocaleDateString()}`;
                         {!isSafe && (
                           <button
                             onClick={() => {
-                              setTargetSubject(`${sub.code}: ${sub.name}`);
+                              setTargetSubject(sub.code + ": " + sub.name);
                               setShowAppealModal(true);
                             }}
                             className="text-indigo-600 hover:text-indigo-800 font-bold"
@@ -607,8 +610,8 @@ Date: ${ new Date().toLocaleDateString()}`;
                   {subjects.map(s => {
                     const subjectPct = Math.round((s.attended / s.total) * 100);
                     return (
-                      <option key={s.code} value={`${s.code}: ${s.name}`}>
-                        {s.code}: {s.name} ({subjectPct}% attendance)
+                      <option key={s.code} value={s.code + ": " + s.name}>
+                        {s.code + ": " + s.name + " (" + subjectPct + "% attendance)"}
                       </option>
                     );
                   })}
@@ -651,7 +654,7 @@ Date: ${ new Date().toLocaleDateString()}`;
                 }}
                 className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition"
               >
-                {copiedLetter ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copiedLetter ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4 text-white" />}
                 {copiedLetter ? "Copied to Clipboard!" : "Copy Official Letter"}
               </button>
             </div>
@@ -720,4 +723,3 @@ Date: ${ new Date().toLocaleDateString()}`;
     </div>
   );
 }
-
