@@ -162,7 +162,7 @@ Thanking you.
 Sincerely,
 ${student.name}
 Roll No: ${student.id}
-Date: ${new Date().toLocaleDateString()}`;
+Date: ${ new Date().toLocaleDateString()}`;
 
   const handleSendMessage = (customText?: string) => {
     const text = customText || inputQuery;
@@ -720,3 +720,4 @@ Date: ${new Date().toLocaleDateString()}`;
     </div>
   );
 }
+
